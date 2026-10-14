@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UNANDES — Módulo I: Secuencia de Aprendizaje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEEFEA; --ink:#141B33; --ink-soft:#505878;
+    --accent:#01084E; --accent-ink:#ffffff; --green:#6E9A34; --green-text:#4F7224;
+    --line:#CBCEDB; --surface:#FFFFFF; --surface-2:#F3F4F8; --on-green:#10210A;
+    --radius:4px;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0D1026; --ink:#E7E9F5; --ink-soft:#A7ACC9;
+      --accent:#8296DE; --accent-ink:#0D1026; --green:#A9CB63; --green-text:#BFE07E;
+      --line:#2B2F4E; --surface:#161A33; --surface-2:#191D3B; --on-green:#10210A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0D1026; --ink:#E7E9F5; --ink-soft:#A7ACC9;
+    --accent:#8296DE; --accent-ink:#0D1026; --green:#A9CB63; --green-text:#BFE07E;
+    --line:#2B2F4E; --surface:#161A33; --surface-2:#191D3B; --on-green:#10210A;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%;}
+  *{box-sizing:border-box;}
+  body{margin:0; min-height:100%; background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans',sans-serif; line-height:1.55;}
+  h1,h2,h3{font-family:'Source Serif 4',serif; font-weight:700; margin:0 0 .3em;}
+  .wrap{max-width:920px; margin:0 auto; padding:28px 20px 64px;}
+  header.top{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; border-bottom:2px solid var(--accent); padding-bottom:18px; margin-bottom:22px; flex-wrap:wrap;}
+  header.top .brand{display:flex; align-items:center; gap:14px;}
+  header.top .brand img{height:52px; width:auto; flex:none;}
+  header.top .eyebrow{font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; color:var(--green-text);}
+  h1{font-size:1.4rem;}
+  .meta{font-size:.82rem; color:var(--ink-soft); text-align:right;}
+  footer.site{margin-top:40px; padding-top:16px; border-top:1px solid var(--line); font-size:.76rem; color:var(--ink-soft); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+  .layout{display:grid; grid-template-columns:200px 1fr; gap:28px;}
+  @media (max-width:720px){ .layout{grid-template-columns:1fr;} }
+  nav.rail{border-right:1px solid var(--line); padding-right:18px;}
+  @media (max-width:720px){ nav.rail{border-right:none; border-bottom:1px solid var(--line); padding:0 0 14px; margin-bottom:6px;} }
+  .step-item{display:flex; gap:10px; align-items:flex-start; padding:7px 0; cursor:pointer; font-size:.84rem; color:var(--ink-soft);}
+  .step-item .n{flex:0 0 20px; height:20px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:.68rem;}
+  .step-item.active{color:var(--ink); font-weight:600;}
+  .step-item.active .n{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+  .step-item.done .n{background:var(--green); color:var(--on-green); border-color:var(--green);}
+  main section{display:none;}
+  main section.active{display:block;}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
+  label{display:block; font-size:.82rem; color:var(--ink-soft); margin:14px 0 6px;}
+  label:first-child{margin-top:0;}
+  textarea, input[type=text], input[type=number], select{width:100%; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:.95rem; padding:10px 12px; resize:vertical;}
+  textarea{min-height:90px;}
+  .row{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+  .row2{display:flex; gap:14px; flex-wrap:wrap;}
+  .row2 > div{flex:1; min-width:200px;}
+  button.primary, button.ghost{font-family:inherit; font-size:.88rem; padding:9px 16px; border-radius:var(--radius); cursor:pointer;}
+  button.primary{background:var(--accent); color:var(--accent-ink); border:1px solid var(--accent);}
+  button.ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
+  button:disabled{opacity:.5; cursor:default;}
+  .hint{font-size:.82rem; color:var(--ink-soft); margin-top:4px;}
+  details{margin-top:12px; border:1px solid var(--line); border-radius:var(--radius); padding:8px 12px; background:var(--surface-2);}
+  details summary{cursor:pointer; font-size:.84rem; color:var(--ink-soft);}
+  details .inner{font-size:.86rem; margin-top:8px; white-space:pre-wrap;}
+  .nav-btns{display:flex; justify-content:space-between; margin-top:22px;}
+  pre.doc{white-space:pre-wrap; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); padding:16px; font-size:.86rem; max-height:440px; overflow:auto;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  #printArea{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
+  .doc-head{display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--accent); padding-bottom:12px; margin-bottom:14px;}
+  .doc-head img{height:42px;}
+  .doc-head h3{font-size:1.1rem; margin:0;}
+  .doc-meta{font-size:.84rem; color:var(--ink-soft); margin-bottom:14px;}
+  .doc-meta b{color:var(--ink);}
+  .table-wrap{overflow-x:auto;}
+  table.seq{width:100%; border-collapse:collapse; margin-top:10px; font-size:.78rem; table-layout:fixed;}
+  table.seq th, table.seq td{border:1px solid var(--line); padding:7px; vertical-align:top; word-wrap:break-word;}
+  table.seq th{background:var(--accent); color:var(--accent-ink); font-weight:600; text-align:left; font-size:.76rem;}
+  table.seq td.rowlabel{background:var(--surface-2); font-weight:600;}
+  .tool-chip{display:inline-block; margin:4px 6px 0 0; padding:4px 10px; border:1px solid var(--line); border-radius:999px; font-size:.78rem; cursor:pointer; background:var(--surface-2); color:var(--accent);}
+  .tool-chip:hover{border-color:var(--accent);}
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{position:absolute; left:0; top:0; width:100%; border:none; padding:0;}
+    .no-print{display:none !important;}
+  }
+  @page{ size: landscape; margin: 10mm; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <img src="data:image/png;base64,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" alt="Logotipo UNANDES">
+      <div>
+        <div class="eyebrow">PRODED · Programa de Desarrollo Docente</div>
+        <h1>MÓDULO I — Secuencia de Aprendizaje</h1>
+      </div>
+    </div>
+    <div class="meta" id="carreraLabel">Carrera: sin elegir</div>
+  </header>
+
+  <div class="layout">
+    <nav class="rail" id="rail"></nav>
+    <main id="main">
+
+      <section data-step="0">
+        <div class="card">
+          <h2>1. Tu carrera y los datos de la sesión</h2>
+          <div class="row2">
+            <div><label for="facultad">Facultad</label><select id="facultad"></select></div>
+            <div><label for="carrera">Carrera</label><select id="carrera"></select></div>
+          </div>
+          <div class="row2">
+            <div><label for="asignatura">Asignatura / Unidad temática</label><input type="text" id="asignatura" placeholder="Ej.: Fisiología Cardiovascular"></div>
+            <div><label for="duracionTotal">Duración total de la sesión (min)</label><input type="number" id="duracionTotal" placeholder="90"></div>
+          </div>
+          <div class="nav-btns"><span></span><button class="primary" data-next>Continuar</button></div>
+        </div>
+      </section>
+
+      <section data-step="1">
+        <div class="card">
+          <h2>2. Resultado de aprendizaje</h2>
+          <details id="ejResultado"><summary>Ver ejemplo de tu carrera</summary><div class="inner" id="ejResultadoBody"></div></details>
+          <label for="que">Qué</label>
+          <textarea id="que" placeholder="El verbo + la capacidad que analiza, diseña o aplica el estudiante."></textarea>
+          <label for="paraque">Para qué</label>
+          <textarea id="paraque" placeholder="La finalidad profesional o práctica."></textarea>
+          <label for="como">Cómo</label>
+          <textarea id="como" placeholder="El proceso o condición bajo la cual se demuestra esa capacidad."></textarea>
+          <label for="competencias">Competencias transversales</label>
+          <textarea id="competencias" placeholder="Ej.: Pensamiento crítico, trabajo en equipo…"></textarea>
+          <div class="nav-btns"><button class="ghost" data-back>Atrás</button><button class="primary" data-next>Continuar</button></div>
+        </div>
+      </section>
+
+      <section data-step="2">
+        <div class="card">
+          <h2 id="momentoTitulo">3. Momento</h2>
+          <p class="hint" id="momentoTip"></p>
+          <label for="m-duracion">Duración</label>
+          <input type="text" id="m-duracion" placeholder="p. ej. 15 min">
+          <label for="m-actividad">Actividad de los estudiantes (qué van a HACER)</label>
+          <textarea id="m-actividad" placeholder="Empieza con un verbo de acción…"></textarea>
+          <label for="m-recursos">Recursos / Materiales (con enlaces)</label>
+          <textarea id="m-recursos" placeholder="Físicos y/o digitales…"></textarea>
+          <div class="hint">Herramientas digitales sugeridas para tu carrera (clic para añadir):</div>
+          <div id="toolSuggestions"></div>
+          <label for="m-evaluacion">Evaluación (¿cómo sabré que lo lograron?)</label>
+          <textarea id="m-evaluacion" placeholder="Producto, observación, participación…"></textarea>
+          <details id="ejMomento"><summary>Ver ejemplo de tu carrera para este momento</summary><div class="inner" id="ejMomentoBody"></div></details>
+          <div class="nav-btns"><button class="ghost" data-back>Atrás</button><button class="primary" id="btnMomentoNext">Continuar</button></div>
+        </div>
+      </section>
+
+      <section data-step="7">
+        <div class="card">
+          <h2 class="no-print">8. Tu secuencia de aprendizaje</h2>
+          <div id="printArea"></div>
+          <div class="row no-print">
+            <button class="primary" id="btnPrint">Descargar PDF</button>
+            <button class="ghost" id="btnReset">Reiniciar taller</button>
+          </div>
+          <div class="hint no-print">Se abrirá el diálogo de impresión: elige "Guardar como PDF" como destino.</div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="site">
+    <span style="font-style:italic;">VIVE LA EXPERIENCIA DE APRENDER HACIENDO</span>
+    <span>© 2026 UNANDES. Todos los derechos reservados.</span>
+  </footer>
+</div>
+
+<script>
+const MOMENTOS_META = [
+  {nombre:"Activación / Motivación", tip:"Conecta lo que el estudiante ya sabe con el nuevo contenido y capta su atención."},
+  {nombre:"Adquisición / Construcción", tip:"El estudiante construye el nuevo conocimiento de forma estructurada y comprensible."},
+  {nombre:"Práctica / Aplicación", tip:"El estudiante aplica lo aprendido en situaciones controladas, con retroalimentación."},
+  {nombre:"Transferencia / Creación", tip:"El momento más alto: aplicar lo aprendido en contextos nuevos o crear algo propio (Bloom: Analizar, Evaluar, Crear)."},
+  {nombre:"Cierre y Metacognición", tip:"El estudiante reflexiona sobre su propio proceso de aprendizaje."}
+];
+
+const FACULTADES = {
+  "Tecnología e Ingeniería": ["Ingeniería de Sistemas","Ingeniería en Mecánica Automotriz","Ingeniería Autotrónica"],
+  "Ciencias de la Salud": ["Medicina","Odontología","Optometría","Imagenología"],
+  "Derecho y Ciencias Sociales": ["Derecho"],
+  "Negocios y Ciencias Empresariales": ["Administración de Empresas","Ingeniería Comercial","Contaduría Pública","Marketing","Comercio Internacional","Diseño Textil y Modas"],
+  "Gastronomía y Hotelería": ["Gastronomía y Hotelería"]
+};
+
+function R(que,paraque,como){ return {que,paraque,como}; }
+function M(duracion,actividad,recursos,evaluacion){ return {duracion,actividad,recursos,evaluacion}; }
+
+const CARRERAS = {
+"Medicina": {
+  resultado: R("Analiza el ciclo cardíaco y el gasto cardíaco","apoyar el diagnóstico y manejo de pacientes con alteraciones cardiovasculares","Interpretando cambios hemodinámicos en situaciones clínicas normales y patológicas relacionados a los eventos eléctricos y mecánicos del corazón"),
+  competencias: "Pensamiento crítico, trabajo en equipo y toma de decisiones clínicas.",
+  momentos: [
+    M("8 min","En parejas observan un video corto de un paciente con taquicardia y responden: ¿Qué creen que está pasando en el corazón de este paciente?","Video: Ciclo Cardíaco - Animación (3 min); Mentimeter para la participación","Participación y mínimo 3 hipótesis clínicas por pareja"),
+    M("20 min","En equipos construyen un mapa conceptual del ciclo cardíaco (sístole, diástole, ruidos cardíacos, volúmenes y presiones).","Plantilla de Mapa Conceptual (Google Docs); Diapositivas del docente; Lectura: Fisiología Cardiovascular - Guyton","Mapa conceptual completo y preciso"),
+    M("25 min","En grupos de 4 resuelven 3 casos clínicos (reposo, ejercicio y shock) calculando gasto cardíaco y explicando los cambios fisiológicos.","Fichas de 3 casos clínicos; Calculadora o Excel; Video de apoyo: Gasto Cardíaco","Hoja de resolución con cálculos y explicaciones correctas"),
+    M("20 min","Cada grupo diseña un protocolo básico de manejo inicial para un paciente con bajo gasto cardíaco, justificando cada paso con fisiología.","Plantilla de protocolo clínico; Guía de valores normales","Protocolo completo con justificación fisiológica"),
+    M("17 min","Cada estudiante responde: ¿Qué relación existe entre el ciclo cardíaco y las patologías más frecuentes que veré en la práctica clínica? + una duda que aún tiene.","Formulario Google Forms; Tarjetas","Reflexión individual + cierre de dudas")
+  ]
+},
+"Ingeniería en Mecánica Automotriz": {
+  resultado: R("Analiza los ciclos Otto y Diesel en motores de combustión interna","seleccionar, diseñar y optimizar motores según el tipo de vehículo, uso operativo y requisitos de eficiencia y emisiones","Diferenciando fases, relación de compresión, combustible, eficiencia térmica, torque y potencia, y aplicando este análisis a casos reales automotrices"),
+  competencias: "Pensamiento crítico, solución de problemas reales y trabajo en equipo multidisciplinario.",
+  momentos: [
+    M("8 min","En parejas observan videos de motores y responden: ¿Qué diferencias notan entre el motor de un auto deportivo y el de un camión? ¿Por qué?","Video: Motor Ciclo Otto (3 min); Video: Motor Ciclo Diesel (3 min); Miro","Participación y mínimo 5 diferencias identificadas"),
+    M("20 min","En equipos construyen un cuadro comparativo detallado entre el Ciclo Otto y el Ciclo Diesel (fases, relación de compresión, combustible, eficiencia, torque, aplicación).","Plantilla editable de cuadro comparativo; Diapositivas del docente; Lectura: Motores de Combustión Interna - Heywood","Cuadro comparativo completo y preciso"),
+    M("25 min","En grupos de 4 analizan datos técnicos de 3 motores reales (sedán, moto, camión) y calculan eficiencia térmica y potencia teórica.","Fichas técnicas de motores reales; Tabla de cálculo (Excel); Calculadora","Hoja de cálculos con resultados correctos y análisis"),
+    M("20 min","Cada grupo selecciona un vehículo (real o propuesto) y diseña mejoras al motor para aumentar eficiencia y reducir emisiones.","Plantilla de propuesta de mejora; Catálogo de componentes automotrices; Software opcional: Engine Analyzer","Propuesta de mejora técnica justificada"),
+    M("17 min","Cada estudiante responde: ¿Qué ciclo recomendarías para el mercado boliviano actual y por qué? + una duda técnica.","Formulario Google Forms; Tarjetas","Reflexión individual + cierre de dudas")
+  ]
+},
+"Derecho": {
+  resultado: R("Analiza los elementos esenciales y requisitos de validez de los contratos","determinar la existencia, validez o nulidad de un contrato","Aplicando el derecho positivo, doctrina y jurisprudencia"),
+  competencias: "Pensamiento jurídico crítico y argumentación; solución de problemas jurídicos; comunicación oral y escrita con rigor técnico-jurídico.",
+  momentos: [
+    M("8 min","En parejas analizan un contrato cotidiano (alquiler, compraventa de celular o servicio) y señalan qué elementos reconocen y posibles problemas.","Contratos reales impresos o digitales; Padlet","Participación y mínimo 4 elementos o problemas identificados"),
+    M("20 min","En equipos construyen un mapa conceptual de los elementos esenciales y requisitos de validez del contrato (consentimiento, objeto, causa, forma).","Plantilla de Mapa Conceptual; Diapositivas del docente; Código Civil (Bolivia) Art. 450 al 520","Mapa conceptual completo y preciso"),
+    M("25 min","En grupos de 4 analizan 3 casos jurisprudenciales reales y determinan si el contrato es válido, nulo o anulable, justificando con normas.","Fichas de 3 casos reales; Código Civil impreso o PDF; Sentencias clave","Hoja de análisis jurídico con justificación correcta"),
+    M("20 min","Cada grupo redacta un contrato completo (compraventa de vehículo o arrendamiento) aplicando todos los requisitos y justifica las cláusulas más importantes.","Plantilla editable de contrato; Código Civil; Ejemplos de contratos","Contrato redactado + justificación de cláusulas"),
+    M("17 min","Cada estudiante responde: ¿Qué es lo más importante que debo verificar antes de firmar o recomendar un contrato? + una duda que aún tiene.","Formulario Google Forms; Tarjetas","Reflexión individual + cierre de dudas")
+  ]
+},
+"Ingeniería de Sistemas": {
+  resultado: R("Aplica los modelos OSI y TCP/IP","diagnosticar y resolver problemas básicos de comunicación en redes de datos, entendiendo cómo fluye la información entre dispositivos","Analizando las funciones de cada capa, identificando protocolos asociados y justificando su uso en escenarios reales de redes"),
+  competencias: "Pensamiento analítico y sistemático; solución de problemas técnicos; trabajo en equipo y comunicación técnica efectiva.",
+  momentos: [
+    M("8 min","En parejas observan un video corto y responden en Mentimeter: ¿Qué pasaría si no existieran reglas (protocolos) para que los dispositivos se comuniquen?","Video: Cómo funciona Internet realmente (3:30 min); Mentimeter o Padlet","Participación y mínimo 2 ideas aportadas por pareja"),
+    M("20 min","En equipos construyen un cuadro comparativo detallado entre el Modelo OSI y el Modelo TCP/IP (capas, funciones y protocolos).","Plantilla editable de cuadro comparativo (Google Docs); Diapositivas del docente; Lectura: Modelo OSI y TCP/IP - Cisco","Cuadro comparativo completo y correcto"),
+    M("25 min","En grupos de 4 analizan 4 escenarios reales (correo, videollamada, navegación web, impresión en red) e identifican qué capas de OSI y TCP/IP intervienen.","Fichas con 4 escenarios; Tabla de protocolos por capa","Hoja de análisis con identificación correcta de capas"),
+    M("20 min","Cada grupo diagnostica y propone una solución a un caso problema (p. ej. \u201cno puedo conectarme a Zoom\u201d o \u201cla red está lenta\u201d) usando ambos modelos.","3 casos problema reales; Plantilla de diagnóstico; Herramienta: Wireshark (solo demostración)","Informe de diagnóstico + solución propuesta"),
+    M("17 min","Cada estudiante responde: ¿Qué capa considero más importante y por qué? + una duda que aún tiene sobre los modelos.","Formulario Google Forms; Tarjetas (opcional)","Reflexión individual + cierre colectivo de dudas")
+  ]
+},
+"Ingeniería Comercial": {
+  resultado: R("Analiza el comportamiento del consumidor digital","diseñar estrategias de marketing digital personalizadas según el comportamiento real de los consumidores en el entorno online","Identificando los factores que influyen en su comportamiento (redes sociales, experiencia de usuario, confianza digital, FOMO, etc.)"),
+  competencias: "Pensamiento analítico y estratégico digital; orientación al cliente en entornos online; trabajo en equipo y comunicación de insights de mercado.",
+  momentos: [
+    M("8 min","En parejas analizan sus propias experiencias recientes de compra online y responden: ¿Qué les hizo comprar o abandonar el carrito?","Padlet o Mentimeter; Video corto: Por qué abandonamos carritos de compra (3 min)","Participación y mínimo 4 razones identificadas por pareja"),
+    M("20 min","En equipos construyen un mapa conceptual del comportamiento del consumidor digital (factores culturales, sociales, psicológicos y tecnológicos).","Plantilla Mapa Conceptual (Google Docs); Diapositivas del docente; Lectura: Comportamiento del Consumidor Digital 2025","Mapa conceptual completo y organizado"),
+    M("25 min","En grupos de 4 analizan el comportamiento digital de un producto real (delivery, ropa online, celulares) e identifican los factores que más influyen.","Fichas de casos bolivianos (PedidosYa, Rappi, Mercado Libre, Linio); Tabla de factores digitales","Hoja de análisis con identificación correcta de factores"),
+    M("20 min","Cada grupo elige un segmento digital boliviano y propone 3 estrategias de marketing digital basadas en el análisis.","Plantilla de Estrategias Digitales; Ejemplos: TikTok, Instagram, WhatsApp Business","3 estrategias bien justificadas y creativas"),
+    M("17 min","Cada estudiante responde: ¿Cuál es el factor más importante del comportamiento digital en Bolivia actualmente? ¿Cómo lo aplicaré en mi futuro profesional?","Formulario Google Forms; Tarjetas","Reflexión individual + cierre de conclusiones clave")
+  ]
+},
+"Gastronomía y Hotelería": {
+  resultado: R("Analiza la calidad del servicio en establecimientos gastronómicos y hoteleros","implementar acciones de mejora continua que aumenten la satisfacción del cliente, la fidelización y la rentabilidad del negocio","Aplicando herramientas como SERVQUAL, mystery shopper y mapas de experiencia del cliente, para identificar brechas de servicio"),
+  competencias: "Liderazgo en la dirección de servicios; orientación al cliente y pensamiento estratégico; trabajo en equipo y resolución de problemas operativos.",
+  momentos: [
+    M("8 min","En parejas comparten una experiencia reciente (buena o mala) en un restaurante u hotel y responden: ¿Qué hizo que la experiencia fuera memorable o decepcionante?","Miro o Mentimeter; Video corto: El poder de la experiencia del cliente (3 min)","Participación y mínimo 4 elementos clave identificados"),
+    M("20 min","En equipos construyen un mapa conceptual de los componentes de la calidad del servicio (tangibles, confiabilidad, capacidad de respuesta, seguridad y empatía - Modelo SERVQUAL).","Plantilla Mapa Conceptual (Google Docs); Diapositivas del docente; Lectura: SERVQUAL - Universidad de Chile","Mapa conceptual completo y bien estructurado"),
+    M("25 min","En grupos de 4 aplican el modelo SERVQUAL a un caso real (restaurante u hotel local) e identifican brechas de servicio.","Fichas de casos reales (restaurante en La Paz o hotel boutique); Tabla SERVQUAL editable","Hoja de evaluación SERVQUAL completada con brechas identificadas"),
+    M("20 min","Cada grupo diseña un Plan de Mejora de la Experiencia del Cliente (3 acciones concretas) para el caso analizado, incluyendo indicadores de éxito.","Plantilla de Plan de Mejora; Ejemplo: Mystery Shopper en Hotelería","Plan de mejora con 3 acciones justificadas y medibles"),
+    M("17 min","Cada estudiante responde: ¿Qué es lo más importante que debe hacer un director de servicios para garantizar una excelente experiencia del cliente? + una aplicación a su futuro profesional.","Formulario Google Forms; Tarjetas flash cards Wordwall","Reflexión individual + conclusiones grupales")
+  ]
+},
+"Diseño Textil y Modas": {
+  resultado: R("Analiza las principales tendencias futuras de la moda y su relación con la sostenibilidad","diseñar colecciones responsables, innovadoras y alineadas con las demandas del consumidor consciente del siglo XXI","Investigando tendencias (circularidad, materiales innovadores, tecnología y slow fashion), evaluando su impacto ambiental"),
+  competencias: "Pensamiento crítico y prospectivo; diseño responsable y ético; creatividad aplicada a desafíos globales.",
+  momentos: [
+    M("8 min","En parejas observan imágenes y videos de tendencias 2025-2030 y responden: ¿Qué tendencia te parece más sostenible y cuál menos?","App Mural con imágenes de tendencias; Video: Tendencias Moda 2025-2030 (3 min)","Participación y mínimo 3 argumentos sustentados"),
+    M("20 min","En equipos construyen un mapa conceptual de las principales tendencias futuras + los 5 principios clave de la moda sostenible (circularidad, trazabilidad, materiales innovadores, inclusión, slow fashion).","Plantilla Mapa Conceptual (Canva); Diapositivas del docente; Lectura: Fashion Future Report - Ellen MacArthur Foundation","Mapa conceptual completo y bien organizado"),
+    M("25 min","En grupos de 4 analizan una tendencia futura (moda regenerativa, biomateriales, IA en diseño, upcycling) y evalúan su nivel de sostenibilidad real.","Fichas de 4 tendencias futuras; Tabla de evaluación de sostenibilidad","Tabla de evaluación completada con análisis crítico"),
+    M("20 min","Cada grupo diseña un concepto de mini-colección sostenible (3 looks) inspirada en una tendencia futura, justificando materiales, procesos y storytelling.","Plantilla de Moodboard + Bocetos; Herramienta: Canva / Pinterest / Milanote","Moodboard + justificación de sostenibilidad entregado"),
+    M("17 min","Cada estudiante responde: ¿Qué tendencia futura te gustaría desarrollar en tu carrera y cómo la harías sostenible?","Formulario Google Forms; Rueda de conclusiones","Reflexión individual + puesta en común")
+  ]
+},
+"Odontología": {
+  resultado: R("Identifica la anatomía interna del diente (cámara pulpar, conductos radiculares, foramen apical y tejidos pulpares)","el diagnóstico de patologías pulpares y planificación de tratamientos restauradores","Reconociendo las variaciones anatómicas, localizando los conductos radiculares y relacionando la anatomía interna con la clínica endodóntica"),
+  competencias: "Observación detallada y pensamiento espacial tridimensional; razonamiento clínico y diagnóstico; precisión y atención al detalle.",
+  momentos: [
+    M("8 min","En parejas observan radiografías periapicales y responden: ¿Qué ven dentro del diente? ¿Por qué es importante conocer su anatomía interna?","X-ray interpreter; Video corto: Anatomía Interna del Diente (3 min)","Participación y mínimo 3 observaciones relevantes"),
+    M("20 min","En equipos construyen un cuadro comparativo de la anatomía interna de dientes anteriores, premolares y molares (cámara pulpar, número de conductos, forma y variaciones).","Plantilla editable de cuadro comparativo; Diapositivas del docente; Atlas digital: Root Canal Anatomy - Universidad de São Paulo","Cuadro comparativo completo y preciso"),
+    M("25 min","En grupos de 4 observan dientes transparentados o modelos 3D e identifican cámara pulpar, orificios de entrada, conductos y foramen apical.","Dientes transparentados o réplicas; Modelos 3D impresos o digitales; Lupas / Microscopio dental","Identificación correcta de al menos 10 estructuras anatómicas"),
+    M("20 min","Cada grupo analiza una radiografía de un caso clínico y diseña el acceso endodóntico ideal justificando según la anatomía interna del diente.","Radiografías clínicas reales (anonimizadas); Plantilla de diseño de acceso endodóntico; Software Blue Sky Plan o papel","Diseño de acceso + justificación anatómica entregada"),
+    M("17 min","Cada estudiante responde: ¿Cuál es la variación anatómica más importante que debo recordar para no fallar en un tratamiento endodóntico?","Formulario Google Forms; Tarjetas de estudio Quizlet","Reflexión individual + cierre de dudas clínicas")
+  ]
+},
+"Marketing": {
+  resultado: R("Diseña una estrategia de Marketing Mix (Producto, Precio, Plaza y Promoción)","posicionar un producto o servicio de forma efectiva en el mercado","Tomando decisiones estratégicas en las 4 P's y justificando cada decisión según el segmento objetivo y el entorno competitivo"),
+  competencias: "Pensamiento estratégico y analítico; creatividad aplicada al marketing; trabajo en equipo y presentación de propuestas profesionales.",
+  momentos: [
+    M("8 min","En parejas analizan un producto conocido (Coca-Cola, Redmi, PedidosYa o un producto boliviano) y responden: ¿Qué hace que este producto tenga éxito o fracase?","Google Keep; Imágenes de productos locales e internacionales","Participación y mínimo 4 ideas clave"),
+    M("20 min","Los equipos construyen un mapa conceptual detallado de las 4 P's del Marketing Mix, incluyendo variables y decisiones clave de cada una.","Plantilla Mapa Conceptual (Canva/Google Slides); Diapositivas del docente; Lectura: Marketing Mix - Kotler","Mapa conceptual completo y bien estructurado"),
+    M("25 min","En grupos de 4 aplican las 4 P's a un producto boliviano real (cerveza Paceña, chocolate El Ceibo, quinoa real, etc.) y llenan la tabla de análisis.","Fichas de productos bolivianos; Tabla editable de las 4 P's (plantilla Canva)","Tabla de las 4 P's completada con decisiones coherentes"),
+    M("20 min","Cada grupo elige un producto o servicio nuevo (real o inventado) y diseña su estrategia completa de Marketing Mix, creando propuestas concretas para cada P.","Plantilla de Estrategia Marketing Mix; Renderforest para mockups","Estrategia completa de las 4 P's + justificación estratégica"),
+    M("17 min","Cada estudiante responde: ¿Cuál de las 4 P's consideras más importante actualmente en el mercado boliviano y por qué?","Formulario Google Forms; Rueda de conclusiones","Reflexión individual + puesta en común")
+  ]
+},
+"Imagenología": {
+  resultado: R("Analiza los fenómenos físicos que ocurren durante la propagación del ultrasonido en los tejidos biológicos","obtener imágenes de mayor calidad diagnóstica","Relacionando los conceptos de reflexión, refracción, atenuación, impedancia acústica y dispersión con su efecto en la formación de la imagen ecográfica"),
+  competencias: "Pensamiento físico aplicado al diagnóstico por imágenes; análisis crítico e interpretación de imágenes; toma de decisiones técnicas para mejorar la calidad diagnóstica.",
+  momentos: [
+    M("8 min","En parejas observan imágenes ultrasonográficas con y sin artefactos y responden: ¿Qué creen que está afectando la calidad de la imagen?","Miro con imágenes US (buenas y con artefactos); Video corto: Cómo viaja el ultrasonido en el cuerpo (3 min)","Participación y mínimo 4 ideas correctas"),
+    M("20 min","En equipos construyen un mapa conceptual de los fenómenos acústicos (reflexión, refracción, atenuación, impedancia acústica y dispersión).","Plantilla de Mapa Conceptual (Canva/Google Slides); Diapositivas del docente; Lectura: Física del Ultrasonido - Radiopaedia","Mapa conceptual completo y preciso"),
+    M("25 min","En grupos de 4 analizan 5 casos de imágenes ultrasonográficas e identifican qué fenómeno acústico está presente y cómo afecta la imagen.","Fichas con 5 imágenes reales (hígado, tiroides, obstétrica, etc.); Tabla de fenómenos acústicos","Hoja de análisis con identificación correcta de fenómenos"),
+    M("20 min","Cada grupo recibe un caso clínico y propone los ajustes técnicos (frecuencia, ganancia, profundidad, foco) que realizaría para mejorar la calidad de la imagen, justificando con física.","Plantilla de optimización técnica; Simulador de ultrasonido (opcional) o imágenes","Propuesta de ajustes técnicos justificados"),
+    M("17 min","Cada estudiante responde: ¿Cuál es el fenómeno acústico más importante que debo considerar al realizar un examen ultrasonográfico y por qué?","Formulario Google Forms; Tarjetas","Reflexión individual + cierre de dudas")
+  ]
+},
+"Optometría": {
+  resultado: R("Adapta lentes de contacto blandos y esféricos","proporcionar una corrección óptica eficiente y segura que garantice la salud ocular del paciente","Aplicando fórmulas de compensación de distancia al vértice, queratometría y evaluación con lámpara de hendidura"),
+  competencias: "Pensamiento clínico y diagnóstico diferencial; ética en la atención en salud; comunicación efectiva con el paciente.",
+  momentos: [
+    M("10 min","Analizan el caso de un paciente con alta miopía que reporta visión borrosa y molestias con sus lentes actuales después de 2 horas de uso, e identifican al menos 2 posibles causas del fracaso en la adaptación.","Historia clínica simulada; simulador de retina (opcional); imágenes de ojo rojo","Identificación de al menos 2 posibles causas del fracaso en la adaptación"),
+    M("20 min","Calculan la distancia al vértice para diferentes prescripciones y discuten cómo la sagita del lente afecta la relación lente-córnea.","Calculadoras ópticas; tablas de conversión; texto guía de Contactología","Resolución correcta de ejercicios de compensación de potencia (dioptrías)"),
+    M("25 min","Taller en parejas: realizan la queratometría (medición de curvatura corneal) y seleccionan el radio de curvatura (BC) ideal para el paciente del caso inicial.","Queratómetro; caja de pruebas de lentes de contacto; guías de la IACLE","Selección técnica justificada de los parámetros del lente (BC, diámetro, potencia)"),
+    M("20 min","Elaboran un Protocolo de Higiene y Manejo personalizado para el paciente, explicando de forma sencilla pero técnica cómo evitar infecciones.","Guías de la IACLE; plantilla de protocolo","Calidad de las instrucciones y enfoque preventivo (ética)"),
+    M("15 min","Reflexionan sobre la importancia de la precisión en el cálculo: ¿Cómo afecta un error de 0.25 dioptrías la calidad de vida de un paciente con alta exigencia visual?","Formulario de salida (Exit Ticket)","Capacidad de autocrítica sobre su desempeño clínico")
+  ]
+}
+};
+
+const TOOLS_GENERIC = [
+  ["Padlet","https://padlet.com"],
+  ["Mentimeter","https://www.mentimeter.com"],
+  ["Google Forms","https://forms.google.com"],
+  ["Canva","https://www.canva.com"],
+  ["Miro","https://miro.com"],
+  ["Google Slides","https://slides.google.com"],
+  ["Wordwall","https://wordwall.net"]
+];
+
+const CARRERA_TOOLS = {
+  "Medicina": [["Radiopaedia","https://radiopaedia.org"],["Quizlet","https://quizlet.com"]],
+  "Odontología": [["Radiopaedia","https://radiopaedia.org"],["Quizlet","https://quizlet.com"]],
+  "Optometría": [["IACLE","https://www.iacle.org"],["Quizlet","https://quizlet.com"]],
+  "Imagenología": [["Radiopaedia","https://radiopaedia.org"]],
+  "Ingeniería de Sistemas": [["Cisco Packet Tracer","https://www.netacad.com/courses/packet-tracer"],["Wireshark","https://www.wireshark.org"]],
+  "Ingeniería en Mecánica Automotriz": [["YouTube (canal técnico)","https://www.youtube.com"]],
+  "Ingeniería Autotrónica": [["YouTube (canal técnico)","https://www.youtube.com"]],
+  "Derecho": [["Gaceta Oficial de Bolivia","https://www.gacetaoficialdebolivia.gob.bo"],["Lexivox","https://www.lexivox.org"]],
+  "Marketing": [["Google Trends","https://trends.google.com"],["HubSpot Academy","https://academy.hubspot.com"]],
+  "Ingeniería Comercial": [["Google Trends","https://trends.google.com"],["Statista","https://www.statista.com"]],
+  "Administración de Empresas": [["Trello","https://trello.com"],["Google Sheets","https://sheets.google.com"]],
+  "Contaduría Pública": [["Google Sheets","https://sheets.google.com"]],
+  "Comercio Internacional": [["Trade Map","https://www.trademap.org"]],
+  "Diseño Textil y Modas": [["Pinterest","https://www.pinterest.com"],["Milanote","https://milanote.com"]],
+  "Gastronomía y Hotelería": [["TripAdvisor","https://www.tripadvisor.com"]]
+};
+
+const STEP_NAMES = ["Carrera y datos","Resultado de aprendizaje","Momento 1","Momento 2","Momento 3","Momento 4","Momento 5","Tu secuencia"];
+const MOMENTO_STEP_START = 2;
+
+let state = {
+  facultad:"", carrera:"", asignatura:"", duracionTotal:"",
+  que:"", paraque:"", como:"", competencias:"",
+  secuencia: [0,1,2,3,4].map(()=>({duracion:"",actividad:"",recursos:"",evaluacion:""}))
+};
+let current = 0;
+let activeMomento = 0;
+
+function loadState(){ try{ const raw = localStorage.getItem("secuencia-aprendizaje-draft-v2"); if(raw) state = Object.assign(state, JSON.parse(raw)); }catch(e){} }
+function saveState(){ try{ localStorage.setItem("secuencia-aprendizaje-draft-v2", JSON.stringify(state)); }catch(e){} }
+
+function buildRail(){
+  const rail = document.getElementById("rail"); rail.innerHTML = "";
+  STEP_NAMES.forEach((name,i)=>{
+    const div = document.createElement("div");
+    div.className = "step-item" + (i===current?" active":"") + (i<current?" done":"");
+    div.innerHTML = `<span class="n">${i<current?"✓":i+1}</span><span>${name}</span>`;
+    div.addEventListener("click",()=>goTo(i));
+    rail.appendChild(div);
+  });
+}
+
+function buildFacultadSelect(){
+  const fsel = document.getElementById("facultad");
+  fsel.innerHTML = '<option value="">Selecciona tu facultad…</option>' +
+    Object.keys(FACULTADES).map(f=>`<option value="${f}">${f}</option>`).join("");
+  fsel.value = state.facultad || "";
+  fsel.addEventListener("change", ()=>{
+    state.facultad = fsel.value; state.carrera = ""; saveState();
+    buildCarreraSelect(); updateLabel(); refreshExamples();
+  });
+  buildCarreraSelect();
+}
+
+function buildCarreraSelect(){
+  const csel = document.getElementById("carrera");
+  const carreras = FACULTADES[state.facultad] || [];
+  csel.innerHTML = '<option value="">Selecciona tu carrera…</option>' + carreras.map(c=>`<option value="${c}">${c}</option>`).join("");
+  csel.value = state.carrera || "";
+  csel.onchange = ()=>{ state.carrera = csel.value; saveState(); updateLabel(); refreshExamples(); };
+}
+
+function updateLabel(){
+  document.getElementById("carreraLabel").textContent = state.carrera ? "Carrera: " + state.carrera : "Carrera: sin elegir";
+}
+
+function fieldSync(){
+  ["asignatura","duracionTotal","que","paraque","como","competencias"].forEach(id=>{
+    const el = document.getElementById(id); if(!el) return;
+    el.value = state[id] || "";
+    el.addEventListener("input", ()=>{ state[id]=el.value; saveState(); });
+  });
+}
+
+function refreshExamples(){
+  const ex = CARRERAS[state.carrera];
+  const rb = document.getElementById("ejResultadoBody");
+  if(rb) rb.textContent = ex ? `Qué: ${ex.resultado.que}\nPara qué: ${ex.resultado.paraque}\nCómo: ${ex.resultado.como}\nCompetencias: ${ex.competencias}` : "No hay ejemplo cargado aún para esta carrera.";
+  const mb = document.getElementById("ejMomentoBody");
+  if(mb){
+    if(ex){ const m = ex.momentos[activeMomento]; mb.textContent = `Duración: ${m.duracion}\nActividad: ${m.actividad}\nRecursos: ${m.recursos}\nEvaluación: ${m.evaluacion}`; }
+    else mb.textContent = "No hay ejemplo cargado aún para esta carrera.";
+  }
+}
+
+function renderToolSuggestions(){
+  const box = document.getElementById("toolSuggestions");
+  const tools = [...(CARRERA_TOOLS[state.carrera]||[]), ...TOOLS_GENERIC];
+  box.innerHTML = tools.map(([nombre,url])=>`<span class="tool-chip" data-tool-url="${url}" data-tool-name="${nombre}">+ ${nombre}</span>`).join("");
+  box.querySelectorAll(".tool-chip").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      const ta = document.getElementById("m-recursos");
+      const line = chip.getAttribute("data-tool-name") + " — " + chip.getAttribute("data-tool-url");
+      ta.value = ta.value ? (ta.value.replace(/\s+$/,"") + "\n" + line) : line;
+      state.secuencia[activeMomento].recursos = ta.value; saveState();
+    });
+  });
+}
+
+function loadMomentoFields(){
+  const meta = MOMENTOS_META[activeMomento];
+  document.getElementById("momentoTitulo").textContent = `${MOMENTO_STEP_START+activeMomento+1}. Momento ${activeMomento+1}: ${meta.nombre}`;
+  document.getElementById("momentoTip").textContent = meta.tip;
+  const s = state.secuencia[activeMomento];
+  document.getElementById("m-duracion").value = s.duracion || "";
+  document.getElementById("m-actividad").value = s.actividad || "";
+  document.getElementById("m-recursos").value = s.recursos || "";
+  document.getElementById("m-evaluacion").value = s.evaluacion || "";
+  refreshExamples();
+  renderToolSuggestions();
+  document.getElementById("btnMomentoNext").textContent = activeMomento < 4 ? "Continuar" : "Ir a mi secuencia";
+}
+function wireMomentoInputs(){
+  const map = {"m-duracion":"duracion","m-actividad":"actividad","m-recursos":"recursos","m-evaluacion":"evaluacion"};
+  Object.keys(map).forEach(id=>{
+    document.getElementById(id).addEventListener("input", (e)=>{ state.secuencia[activeMomento][map[id]] = e.target.value; saveState(); });
+  });
+}
+
+function goTo(i){
+  current = i;
+  document.querySelectorAll("main section").forEach(s=>s.classList.remove("active"));
+  if(i >= MOMENTO_STEP_START && i < MOMENTO_STEP_START+5){
+    activeMomento = i - MOMENTO_STEP_START;
+    document.querySelector('main section[data-step="2"]').classList.add("active");
+    loadMomentoFields();
+  } else {
+    const sectionStep = i===7 ? 7 : i;
+    document.querySelector(`main section[data-step="${sectionStep}"]`).classList.add("active");
+  }
+  buildRail(); refreshExamples();
+  if(i===7) renderPreview();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function renderPreview(){
+  const logoImg = document.querySelector("header.top .brand img").src;
+  let html = '<div class="doc-head"><img src="'+logoImg+'" alt="UNANDES"><div><h3>Módulo I — Secuencia de Aprendizaje</h3><div style="font-size:.78rem;color:var(--ink-soft);">PRODED · UNANDES</div></div></div>';
+  html += '<div class="doc-meta"><b>Facultad:</b> '+(esc(state.facultad)||"—")+' &nbsp; <b>Carrera:</b> '+(esc(state.carrera)||"—")+' &nbsp; <b>Asignatura:</b> '+(esc(state.asignatura)||"—")+' &nbsp; <b>Duración total:</b> '+(esc(state.duracionTotal)||"—")+' min</div>';
+  html += '<div class="doc-meta"><b>Qué:</b> '+(esc(state.que)||"(pendiente)")+'<br><b>Para qué:</b> '+(esc(state.paraque)||"(pendiente)")+'<br><b>Cómo:</b> '+(esc(state.como)||"(pendiente)")+'<br><b>Competencias transversales:</b> '+(esc(state.competencias)||"(pendiente)")+'</div>';
+  html += '<div class="table-wrap"><table class="seq"><colgroup><col style="width:4%"><col style="width:14%"><col style="width:8%"><col style="width:28%"><col style="width:24%"><col style="width:22%"></colgroup>';
+  html += '<thead><tr><th>N.°</th><th>Nombre del momento</th><th>Duración</th><th>Actividad</th><th>Recursos</th><th>Evaluación</th></tr></thead><tbody>';
+  MOMENTOS_META.forEach((meta,i)=>{
+    const s = state.secuencia[i];
+    html += '<tr><td class="rowlabel">'+(i+1)+'</td><td class="rowlabel">'+esc(meta.nombre)+'</td><td>'+esc(s.duracion||"—")+'</td><td>'+esc(s.actividad||"(pendiente)")+'</td><td>'+esc(s.recursos||"(pendiente)")+'</td><td>'+esc(s.evaluacion||"(pendiente)")+'</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  html += '<div class="doc-meta" style="margin-top:12px; font-style:italic;">Vive la experiencia de aprender haciendo — © 2026 UNANDES. Todos los derechos reservados.</div>';
+  document.getElementById("printArea").innerHTML = html;
+}
+
+function printDoc(){ window.print(); }
+
+document.addEventListener("click",(e)=>{
+  if(e.target.matches("[data-next]")) goTo(Math.min(current+1,7));
+  if(e.target.matches("[data-back]")) goTo(Math.max(current-1,0));
+  if(e.target.id==="btnMomentoNext"){
+    if(activeMomento<4){ activeMomento++; goTo(MOMENTO_STEP_START+activeMomento); }
+    else goTo(7);
+  }
+  if(e.target.id==="btnPrint") printDoc();
+  if(e.target.id==="btnReset"){
+    if(confirm("¿Reiniciar todo el taller? Se borrará tu progreso guardado en este navegador.")){
+      localStorage.removeItem("secuencia-aprendizaje-draft-v2");
+      location.reload();
+    }
+  }
+});
+
+loadState();
+buildFacultadSelect();
+fieldSync();
+wireMomentoInputs();
+updateLabel();
+buildRail();
+goTo(0);
+</script>
+</body>
+</html>
